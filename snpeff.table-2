@@ -9,7 +9,6 @@ snpEff  -noStats -csvStats snpeff/2.passed.miss.${s}_ann.csv -Xmx6g hg38 annotat
 end
 ##########################################
 
-
 grep -v '^#' annotated/3.passed.miss.MCL40_ann.vcf  | awk -F"ANN=" '{print $2 " " }'|  awk -F"|"   '{print $4 " " $10 " " $11 " "}'
 foreach s ( "`cat sampls`" )
 grep -v '^#' annotated/3.passed.miss.${s}_ann.vcf  | awk -F" " '{print $1 " "  $2 " " $4 " " $5}' > annotated/table_${s}.txt
