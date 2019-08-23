@@ -1,0 +1,39 @@
+
+snpEff  -noStats -csvStats snpeff/1.MCL_82_ann_9.csv -Xmx6g hg38 MCL82_9_somatic_oncefiltered.vcf.gz > annotated/MCL82_9_somatic_oncefiltered.vcf.gz_ann.vcf
+bcftools view -f PASS -i 'INFO/ANN ~ "missense_variant" ' --output-type v annotated/MCL82_9_somatic_oncefiltered.vcf.gz_ann.vcf  > annotated/2.passed.miss.MCL_82_9_ann.vcf
+snpEff  -noStats -csvStats snpeff/2.passed.miss.MCL_82_9_ann.csv -Xmx6g hg38 annotated/2.passed.miss.MCL_82_9_ann.vcf >  annotated/3.passed.miss.MCL_82_9_ann.vcf
+grep -v '^#' annotated/3.passed.miss.MCL_82_9_ann.vcf  | awk -F" " '{print $1 " "  $2 " " $4 " " $5}' > annotated/table_MCL_82_9.txt
+grep -v '^#' annotated/3.passed.miss.MCL_82_9_ann.vcf  | awk -F"ANN=" '{print $2 " " }' |  awk -F"|"   '{print $4 " " $10 " " $11 " "}' > annotated/table_MCL_82_9.gene
+paste annotated/table_MCL_82_9.txt annotated/table_MCL_82_9.gene > annotated/gene_table_MCL_82_9.txt
+
+
+
+
+snpEff  -noStats -csvStats snpeff/1.MCL_82_ann_8.csv -Xmx6g hg38 MCL82-tumor.8_SelectVariants_24_out_snp.vcf > annotated/MCL82-tumor.8_SelectVariants_24_out_snp.vcf_ann.vcf
+bcftools view -f PASS -i 'INFO/ANN ~ "missense_variant" ' --output-type v annotated/MCL82-tumor.8_SelectVariants_24_out_snp.vcf_ann.vcf  > annotated/2.passed.miss.MCL_82_8_ann.vcf
+snpEff  -noStats -csvStats snpeff/2.passed.miss.MCL_82_8_ann.csv -Xmx6g hg38 annotated/2.passed.miss.MCL_82_8_ann.vcf >  annotated/3.passed.miss.MCL_82_8_ann.vcf
+grep -v '^#' annotated/3.passed.miss.MCL_82_8_ann.vcf  | awk -F" " '{print $1 " "  $2 " " $4 " " $5}' > annotated/table_MCL_82_8.txt
+grep -v '^#' annotated/3.passed.miss.MCL_82_8_ann.vcf  | awk -F"ANN=" '{print $2 " " }' |  awk -F"|"   '{print $4 " " $10 " " $11 " "}' > annotated/table_MCL_82_8.gene
+paste annotated/table_MCL_82_8.txt annotated/table_MCL_82_8.gene > annotated/gene_table_MCL_82_8.txt
+
+
+
+X <- t(data.frame(c("chr","0")))
+colnames(X) <- c("SNP","S")
+X<- X[0,]
+
+X1<- read.table("gene_table_MCL_82_9.txt", sep = " ")   
+X2 <- data.frame(paste(X1$V1, X1$V2, X1$V4, X1$V5, X1$V6, sep = ":"))
+X2[,2] <- 1
+dim(X2)
+colnames(X2) <- c("SNP","F8")
+X <- merge(X, X2, by="SNP", , all = TRUE)
+X<- X[,c(1, 3:(ncol(X)))]
+dim(X)
+
+X3<- read.table("gene_table_MCL_82_8.txt", sep = " ")   
+X4 <- data.frame(paste(X3$V1, X3$V2, X3$V4, X3$V5, X3$V6, sep = ":"))
+X4[,2] <- 1
+colnames(X4) <- c("SNP","F9")
+X <- merge(X, X4, by="SNP")
+
