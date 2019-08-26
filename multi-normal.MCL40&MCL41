@@ -1,0 +1,24 @@
+
+X <- t(data.frame(c("chr","0")))
+colnames(X) <- c("SNP","S")
+X<- X[0,]
+
+
+X1 <- read.table("gene_table_MCL43.txt")
+X1b <- read.table("/home/qcai1/Downloads/71W/t_only_to_MCL40/9/annotated/gene_table_MCL43.txt")
+
+X2 <- data.frame(paste(X1$V1, X1$V2, X1$V3, X1$V4, X1$V5, X1$V7, sep = ":"))
+X2b <- data.frame(paste(X1b$V1, X1b$V2, X1b$V3, X1b$V4, X1b$V5, X1b$V7, sep = ":"))
+X2[,2] <- 1
+X2b[,2] <- 1
+colnames(X2) <- c("SNP","A")
+colnames(X2b) <- c("SNP","B")
+
+X <- merge(X, X2, by="SNP", all = TRUE)
+X<- X[,c(1, 3:(ncol(X)))]
+head(X)
+
+dim(X2)
+dim(X2b)
+X3 <- merge(X, X2b, by="SNP")
+dim(X3)
