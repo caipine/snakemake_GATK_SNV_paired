@@ -33,19 +33,13 @@ X1<- read.table(file, sep = " ")   #X1 <- read.table("gene_table_MCL51.txt")
 X2 <- data.frame(paste(X1$V1, X1$V2, X1$V3, X1$V4, X1$V5, X1$V7, sep = ":"))
 X2[,2] <- 1
 colnames(X2) <- c("SNP",i)
+print(i)
+print(dim(X2))
 X <- merge(X, X2, by="SNP", all = TRUE)
 }
-head(X)
-
 X<- X[,c(1, 3:(ncol(X)))]
-head(X)
-
 X[is.na(X)] <- 0
-head(X)
-
 X$sum <- rowSums( X[,2:ncol(X)] )
-head(X)
-
 X <-X[order(X$sum, decreasing = TRUE),]
 head(X)
 dim(X)
@@ -60,3 +54,24 @@ T$sum <- rowSums( T[,2:ncol(T)] )
 
 T1 <-T[order(T$sum, decreasing = TRUE),]
 head(T1)
+
+
+
+##########################################################################
+##########################################################################
+##########################################################################
+
+mkdir snpeff
+mkdir annotated
+foreach s ( "`cat sampls_cart`" )
+snpEff  -noStats -csvStats snpeff/1.${s}_ann.csv -Xmx6g hg38 ${s}_9_somatic_oncefiltered.vcf.gz > annotated/1.${s}_ann.vcf
+bcftools view -f PASS -i 'INFO/ANN ~ "missense_variant" ' --output-type v annotated/1.${s}_ann.vcf  > annotated/2.passed.miss.${s}_ann.vcf
+snpEff  -noStats -csvStats snpeff/2.passed.miss.${s}_ann.csv -Xmx6g hg38 annotated/2.passed.miss.${s}_ann.vcf >  annotated/3.passed.miss.${s}_ann.vcf
+end
+##########################################
+
+foreach s ( "`cat sampls_cart`" )
+grep -v '^#' annotated/3.passed.miss.${s}_ann.vcf  | awk -F" " '{print $1 " "  $2 " " $4 " " $5}' > annotated/table_${s}.txt
+grep -v '^#' annotated/3.passed.miss.${s}_ann.vcf  | awk -F"missense_variant" '{print  $2 }' |  awk -F"|"   '{print $4 " " $9 " " $10 " "}' > annotated/table_${s}.gene
+paste --delimiters=" " annotated/table_${s}.txt annotated/table_${s}.gene > annotated/gene_table_${s}.txt
+end
