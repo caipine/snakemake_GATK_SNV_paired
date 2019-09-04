@@ -1,0 +1,29 @@
+
+
+foreach s ( "`cat sampls-REAL`" )
+grep -v '^#' annotated/3.passed.miss.${s}_ann.vcf  | awk -F"ANN=" '{print $2 " " }' |  awk -F"|"   '{print $4}' > annotated/table_${s}.gene.2
+end
+
+X <- t(data.frame(c("chr","0")))
+colnames(X) <- c("gene","X")
+X<- X[0,]
+
+samples <- read.table("../sampls-REAL")[,1]
+samples
+for (i in samples ) {
+file <- paste("table_", i, ".gene.2", sep="")
+X1 <- read.table(file, sep = " ") 
+X1 <- data.frame(table(X1[,1]))
+colnames(X1) <- c("gene",i)
+X <- merge(X, X1, by="gene", all = TRUE)
+print(file)
+print(nrow(X1))
+#print(X1)
+
+} 
+X<- X[,c(1, 3:(ncol(X)))]
+X[is.na(X)] <- 0
+X$sum <- rowSums( X[,2:ncol(X)] )
+X <-X[order(X$sum, decreasing = TRUE),]
+head(X)
+dim(X)
