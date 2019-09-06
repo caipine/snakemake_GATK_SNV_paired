@@ -1,0 +1,6 @@
+conda install -c bioconda picard
+
+java -jar /home/qcai1/miniconda3/share/picard-2.20.7-0/picard.jar BedToIntervalList \
+      I=190507_HG38_MCL_MDACC_PJ1_EZ_HX3_capture_targets.bed \
+      O=190507_HG38_MCL_MDACC_PJ1_EZ_HX3_capture_targets.interval_list \
+      SD=/home/qcai1/Downloads/hg/hg38/Homo_sapiens_assembly38.dict
