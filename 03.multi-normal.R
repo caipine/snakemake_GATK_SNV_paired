@@ -55,7 +55,13 @@ colnames(X3) <- c("SNP",samples[i])
 }
 Y<- Y[,c(1, 3:(ncol(Y)))]
 Y[is.na(Y)] <- 0
-colnames(Y) <- samples
+colnames(Y) <-  c["SNP", "A5" "A6", "A7", "A8"]
+
+
+
+samples <- read.table("1069L1.samples.tsv2")[,1]
+samples
+colnames(Y[,2:5]) <-  samples
 Y
 
 
