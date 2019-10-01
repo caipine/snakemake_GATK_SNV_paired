@@ -3,7 +3,9 @@
 foreach s ( "`cat sampls-REAL`" )
 grep -v '^#' annotated/3.passed.miss.${s}_ann.vcf  | awk -F"ANN=" '{print $2 " " }' |  awk -F"|"   '{print $4}' > annotated/table_${s}.gene.2
 end
-
+cd annotated
+R
+##################################
 X <- t(data.frame(c("chr","0")))
 colnames(X) <- c("gene","X")
 X<- X[0,]
