@@ -1,0 +1,32 @@
+minoconda2
+gatk4.0.1.1
+R 3.4.1
+
+foreach sample ( "`cat sample.list`" )
+java -jar /home/qcai1/miniconda2/pkgs/gatk4-4.0.1.1-py27_0/share/gatk4-4.0.1.1-0/gatk-package-4.0.1.1-local.jar PlotDenoisedCopyRatios \
+   --standardized-copy-ratios ${sample}-tumor.standardizedCR.tsv    \
+   --denoised-copy-ratios ${sample}-tumor.denoisedCR.tsv         \
+   --sequence-dictionary /home/qcai1/Downloads/hg/hg38/Homo_sapiens_assembly38.dict \
+	 --minimum-contig-length 46709983       \
+	 --output plots   \
+	 --output-prefix ${sample}-tumor
+end
+
+foreach sample ( "`cat sample.list`" )
+java -jar /home/qcai1/miniconda2/pkgs/gatk4-4.0.1.1-py27_0/share/gatk4-4.0.1.1-0/gatk-package-4.0.1.1-local.jar PlotDenoisedCopyRatios \
+   --standardized-copy-ratios ${sample}-control.standardizedCR.tsv    \
+   --denoised-copy-ratios ${sample}-control.denoisedCR.tsv         \
+   --sequence-dictionary /home/qcai1/Downloads/hg/hg38/Homo_sapiens_assembly38.dict \
+	 --minimum-contig-length 46709983       \
+	 --output plots   \
+	 --output-prefix ${sample}-control
+end
+
+
+
+foreach sample ( "`cat sample.list`" )
+java -jar /home/qcai1/miniconda2/pkgs/gatk4-4.0.1.1-py27_0/share/gatk4-4.0.1.1-0/gatk-package-4.0.1.1-local.jar ModelSegments\
+    --denoised-copy-ratios ${sample}-tumor.denoisedCR.tsv  \
+		--output-prefix ${sample}-tumor  \
+		-O sandbox    
+end
